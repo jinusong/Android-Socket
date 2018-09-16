@@ -136,4 +136,5 @@ socket.on("foo", Emitter.Listener() {
     val JSONObject obj = (JSONObject)args[0]
   }
 });
+
 ~~~
