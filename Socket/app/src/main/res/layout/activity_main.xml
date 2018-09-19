@@ -5,19 +5,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
-    <EditText
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="25dp"
         android:hint="Message"
         android:id="@+id/message"/>
-    <TextView
-        android:id="@+id/resultText"
-        android:textSize="25dp"
-        android:text="Text"
-        app:layout_constraintTop_toBottomOf="@+id/disconnect_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
     <Button
         app:layout_constraintTop_toBottomOf="@+id/message"
         android:text="connect"
@@ -30,10 +23,10 @@
         android:id="@+id/disconnect_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-    <Button
+    <TextView
         app:layout_constraintTop_toBottomOf="@+id/disconnect_button"
-        android:text="send"
-        android:id="@+id/send_button"
+        android:text="receive"
+        android:id="@+id/receive_Text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
