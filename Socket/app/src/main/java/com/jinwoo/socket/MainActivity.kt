@@ -2,13 +2,11 @@ package com.jinwoo.socket
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import io.socket.client.Socket
 import io.socket.emitter.Emitter
-import org.json.JSONObject
-import java.io.IOException
+import org.json.JSONException
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,62 +28,57 @@ class MainActivity : AppCompatActivity() {
         Receive_Text = findViewById(R.id.receive_Text)
         receive_btn = findViewById(R.id.receive_btn)
 
-        socket = SocketApplication.get()
-        if(socket != null){
-            Text.setText("Socket 생성")
-        }
-
         connect_btn.setOnClickListener { v ->
-            socket.connect()
-            socket.on(Socket.EVENT_CONNECT, onConnect)
+            Thread(Runnable {
+                socket = SocketApplication.get()
+                if(socket != null){
+                    Text.setText("Socket 생성")
+                }
+                socket.on("Connected", onConnect)
+                socket.connect()
+            }).start()
         }
 
-        receive_btn.setOnClickListener({ v ->
-            socket.connect()
-            socket.on(Socket.EVENT_CONNECT, Receiver)
-        })
+        receive_btn.setOnClickListener { v ->
+            Thread(Runnable {
+                socket.emit("call", socket.on("data_call", Receiver))
+                socket.connect()
+                Text.setText("Receive 성공")
+            }).start()
+        }
 
         disconnect_btn.setOnClickListener { v ->
-            onDestroy()
-            Text.setText("Disconnect 성공")
+            Thread(Runnable {
+                onDestroy()
+                Text.setText("Disconnect 성공")
+            }).start()
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        socket.off(Socket.EVENT_DISCONNECT)
         socket.disconnect()
-        socket.off(Socket.EVENT_DISCONNECT, onConnect)
     }
 
     private val onConnect = Emitter.Listener { args ->
 
-        Thread(Runnable {
-            var data = JSONObject()
-
-
+            var data = "Hello Server"
 
             try {
                 socket.emit("Connect", data)
-            } catch (e: IOException) {
+            } catch (e: JSONException) {
                 e.printStackTrace()
             }
-            Text.setText("onConnect 성공")
-
-        }).start()
-
     }
 
     private val Receiver = Emitter.Listener { args ->
-        Thread(Runnable {
 
-            try {
-                socket.emit("call_Receive")
-                receive_data = args.toString()
-            } catch (e: IOException){
-                e.printStackTrace()
-            }
-            Receive_Text.setText(receive_data)
-
-        }).start()
+        try{
+            receive_data = args.toString()
+        } catch( e : JSONException){
+            e.printStackTrace()
+        }
+        Receive_Text.setText(receive_data)
     }
 }
