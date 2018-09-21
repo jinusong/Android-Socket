@@ -28,37 +28,36 @@ class MainActivity : AppCompatActivity() {
         Receive_Text = findViewById(R.id.receive_Text)
         receive_btn = findViewById(R.id.receive_btn)
 
+        socket = SocketApplication.get()
+        socket.connect()
+
+        if(socket != null){
+            Text.setText("Socket 생성")
+        }
+
+
+
         connect_btn.setOnClickListener { v ->
             Thread(Runnable {
-                socket = SocketApplication.get()
-                if(socket != null){
-                    Text.setText("Socket 생성")
-                }
-                socket.on("Connected", onConnect)
-                socket.connect()
+                socket.on("Connecting", onConnect)
             }).start()
         }
 
         receive_btn.setOnClickListener { v ->
             Thread(Runnable {
-                socket.emit("call", socket.on("data_call", Receiver))
-                socket.connect()
+                socket.emit("call")
+                socket.on("data_call", Receiver)
                 Text.setText("Receive 성공")
             }).start()
         }
 
         disconnect_btn.setOnClickListener { v ->
             Thread(Runnable {
-                onDestroy()
+                socket.disconnect()
+                socket.off(Socket.EVENT_DISCONNECT)
                 Text.setText("Disconnect 성공")
             }).start()
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        socket.off(Socket.EVENT_DISCONNECT)
-        socket.disconnect()
     }
 
     private val onConnect = Emitter.Listener { args ->
@@ -70,6 +69,7 @@ class MainActivity : AppCompatActivity() {
             } catch (e: JSONException) {
                 e.printStackTrace()
             }
+        Text.setText("Connect 성공")
     }
 
     private val Receiver = Emitter.Listener { args ->
