@@ -22,7 +22,7 @@ TCP 는 두 프로그램 간의 통신이 처음 시작될 때부터 끝날 때�
 - 양쪽 어플리케이션 모두 데이터 주고 받기 가능
 - 흐름제어등을 보장해 주며 송신된 순서에 따른 중복되지 않은 데이터를 수신 가능
 - IP와 포트 번호로 소켓을 연결하면 통신 시작
-
+- byte 자료형으로 데이터를 보냄
 
 
 ### 2.1 통신 절차
@@ -44,4 +44,111 @@ TCP 는 두 프로그램 간의 통신이 처음 시작될 때부터 끝날 때�
  6) 사용된 연결 소켓을 닫는다.
  7) 사용을 마쳤을 경우 듣기 소켓을 닫는다.
 
-### 2.2 클라이언트 통신과정
+### 2.2 클라이언트 통신 과정
+#### 1. 듣기 소켓을 생성합니다.
+~~~java
+ private static Socket socket;
+ socket = new Socket();
+~~~
+#### 2. 서버로 connect() 합니다.
+~~~java
+ socket.connect(new InetSocketAddress("localhost", 2000));
+~~~
+#### 3. 접속이 성공했다면 read 및 write 함수를 통해 서버와 통신을 주고 받습니다.
+~~~java
+private static InputStream is;
+private static OutputStream os;
+
+is = socket.getInputStream();
+os = socket.getOutputStream();
+
+byte[] byteArr = null;
+String msg = "Hello Server";
+
+byteArr = msg.getBytes("UTF-8");
+os.write(byteArr);
+os.flush();
+System.out.println("Data Transmitted OK!");
+
+byteArr = new byte[512];
+int readByteCount = is.read();
+
+if(readByteCount == -1)
+    throw new IOException();
+
+msg = new String(byteArr, 0, readByteCount, "UTF-8");
+System.out.println("Data Received OK!");
+System.out.println("Message : " + msg);
+
+~~~
+#### 4. 사용을 마치면 close로 소켓을 닫습니다.
+~~~java
+is.close();
+os.close();
+
+socket.close();
+~~~
+
+
+
+### (참고용) 서버 통신 과정
+#### 1. 소켓을 생성합니다.
+~~~java
+private static ServerSocket serverSocket;
+serverSocket = new ServerSocket();
+~~~
+#### 2. bind합니다. (내선 부여)
+~~~java
+serverSocket.bind(new InetSocketAddress(3880));
+~~~
+#### 3. listen합니다. (내선 연결)
+클라이언트에서 요청이 올 때까지 기다린다!!!!
+#### 4. accept() 클라이언트가 connect할 경우 소켓을 생성 하고 연결한다.
+~~~java
+private static Socket socket;
+
+socket = serverSocket.accept();
+~~~
+
+#### 5. read와 write 함수를 이용해 메시지를 주고 받는다.
+~~~java
+InputStream is = socket.getInputStream();
+OutputStream os = socket.getOutputStream();
+
+byte[] byteArr = new byte[512];
+String msg = null;
+
+int readByteCount = is.read(byteArr);
+
+if(readByteCount == -1)
+    throw new IOException();
+
+msg = new String(byteArr, 0, readByteCount, "UTF-8");
+System.out.println("Data Received OK!");
+System.out.println("Message : " + msg);
+
+msg = "Hello Client";
+byteArr = msg.getBytes("UTF-8");
+os.write(byteArr);
+System.out.println("Data Transmitted OK!");
+os.flush();
+~~~
+
+#### 6. 사용된 연결 소켓을 닫는다.
+~~~java
+is.close();
+os.close();
+socket.close();
+~~~
+
+#### 7. 사용을 마쳤을 경우 듣기 소켓을 닫는다.
+~~~java
+if(!serverSocket.isClosed()) {
+    try {
+        serverSocket.close();
+    } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+    }
+}
+~~~
