@@ -4,7 +4,13 @@
 
 > 작성자 : 송진우
 
-> Present Time : 2018-09-20 (THU)
+> Present Time : 2018-09-28
+
+## 0. 참고 자료
+* https://m.blog.naver.com/goldenkingll/70106915167
+* https://d2.naver.com/helloworld/1336
+* http://woowabros.github.io/woowabros/2017/09/12/realtime-service.html
+* https://github.com/socketio/socket.io-client-java
 
 ## 1. Socket 이란
 
@@ -274,3 +280,10 @@ http.listen('포트 번호!', function(){
 });
 ~~~
 
+## 4. 소켓 통신시 주의할 점
+* TCP/IP의 경우 데이터 타입을 byte배열로 해야하고 Charset을 해야 데이터가 꺠지지 않습니다.
+* 소켓을 생성하고 연결하여 사용을 하고 나면 꼭 정상적으로 소켓의 연결을 끊고 소켓을 닫아줘야 합니다.
+* 소켓도 통신이기 때문에 멀티 스레드를 활용하여 작업을 해줘야 성능 개선 및 로직이 엉키는 것을 방지할 수 있습니다.
+* Socket.io를 사용한다면 이벤트 명이 헷갈리지 않도록 잘 설정해야 합니다. 이벤트가 엇갈릴 경우 일일이 확인해야하는 불상사가 발생합니다.
+
+## 5. Kotlin에 응용해보기
