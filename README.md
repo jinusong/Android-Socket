@@ -174,6 +174,8 @@ if(!serverSocket.isClosed()) {
 - WebSocket을 기반으로 FlashSocket, AJAX Long Polling등 다양한 방식의 실시간 웹 기술들을 하나의 API로 추상화한 node.js 모듈(MIT 라이센스 오픈소스) 
 - 멀티 디바이스(web, android, ios, windows)를 지원합니다.
 
+![Socket.io](http://img1.daumcdn.net/thumb/R1920x0/?fname=http%3A%2F%2Fcfile26.uf.tistory.com%2Fimage%2F2406273E596D913E130B7B)
+
 ### 3.1 Socket.io 의 특징
 
 #### 장점
