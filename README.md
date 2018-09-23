@@ -39,22 +39,29 @@ TCP 는 두 프로그램 간의 통신이 처음 시작될 때부터 끝날 때�
  1) 듣기 소켓을 생선합니다.
  2) bind합니다. (내선 부여)
  3) listen합니다. (내선 연결)
- 4) accept() 클라이언트가 connect할 경우 소켓을 생성 하고 연결한다.
- 5) read와 write 함수를 이용해 메시지를 주고 받는다.
- 6) 사용된 연결 소켓을 닫는다.
- 7) 사용을 마쳤을 경우 듣기 소켓을 닫는다.
+ 4) accept() 클라이언트가 connect할 경우 소켓을 생성 하고 연결합니다.
+ 5) read와 write 함수를 이용해 메시지를 주고 받습니다.
+ 6) 사용된 연결 소켓을 닫습니다.
+ 7) 사용을 마쳤을 경우 듣기 소켓을 닫습니다.
 
-### 2.2 클라이언트 통신 과정
-#### 1. 듣기 소켓을 생성합니다.
+### 2.2 클라이언트 통신 과정 - JAVA
+#### 1. 소켓을 생성합니다.
+* Socket 객체를 생성
 ~~~java
  private static Socket socket;
  socket = new Socket();
 ~~~
 #### 2. 서버로 connect() 합니다.
+* 서버의 아이피와 포트번호를 적고 connect()로 연결합니다.
 ~~~java
- socket.connect(new InetSocketAddress("localhost", 2000));
+ socket.connect(new InetSocketAddress("localhost", '포트번호'));
 ~~~
 #### 3. 접속이 성공했다면 read 및 write 함수를 통해 서버와 통신을 주고 받습니다.
+* 스트림 소켓으로 통신하기 때문에 InputStream과 OutputStream을 만듭니다.
+* 또한 바이트 배열로 서버와 통신을 주고 받습니다.
+* OutputStream에 write() 로 데이터를 적습니다.
+* InputStream에 read() 로 서버의 데이터를 읽습니다.
+* 데이터 송수신시 데이터를 Charset으로 UTF 등을 설정할 수 있습니다.
 ~~~java
 private static InputStream is;
 private static OutputStream os;
@@ -82,6 +89,7 @@ System.out.println("Message : " + msg);
 
 ~~~
 #### 4. 사용을 마치면 close로 소켓을 닫습니다.
+* 통신이 끊나면 스트림 소켓과 소켓을 close() 함수로 닫습니다.
 ~~~java
 is.close();
 os.close();
@@ -91,8 +99,9 @@ socket.close();
 
 
 
-### (참고용) 서버 통신 과정
-#### 1. 소켓을 생성합니다.
+### 2.3 (참고용) 서버 통신 과정 - JAVA
+
+#### 1. 듣기 소켓을 생성합니다.
 ~~~java
 private static ServerSocket serverSocket;
 serverSocket = new ServerSocket();
@@ -103,14 +112,14 @@ serverSocket.bind(new InetSocketAddress(3880));
 ~~~
 #### 3. listen합니다. (내선 연결)
 클라이언트에서 요청이 올 때까지 기다린다!!!!
-#### 4. accept() 클라이언트가 connect할 경우 소켓을 생성 하고 연결한다.
+#### 4. accept() 클라이언트가 connect할 경우 소켓을 생성 하고 연결합니다.
 ~~~java
 private static Socket socket;
 
 socket = serverSocket.accept();
 ~~~
 
-#### 5. read와 write 함수를 이용해 메시지를 주고 받는다.
+#### 5. read와 write 함수를 이용해 메시지를 주고 받습니다.
 ~~~java
 InputStream is = socket.getInputStream();
 OutputStream os = socket.getOutputStream();
@@ -134,14 +143,14 @@ System.out.println("Data Transmitted OK!");
 os.flush();
 ~~~
 
-#### 6. 사용된 연결 소켓을 닫는다.
+#### 6. 사용된 연결 소켓을 닫습니다.
 ~~~java
 is.close();
 os.close();
 socket.close();
 ~~~
 
-#### 7. 사용을 마쳤을 경우 듣기 소켓을 닫는다.
+#### 7. 사용을 마쳤을 경우 듣기 소켓을 닫습니다.
 ~~~java
 if(!serverSocket.isClosed()) {
     try {
@@ -152,3 +161,116 @@ if(!serverSocket.isClosed()) {
     }
 }
 ~~~
+
+## 3. Socket.io
+
+- 실시간 이벤트 서버를 개발 할 수 있는 오픈소스 라이브러리 입니다. 
+- WebSocket을 기반으로 FlashSocket, AJAX Long Polling등 다양한 방식의 실시간 웹 기술들을 하나의 API로 추상화한 node.js 모듈(MIT 라이센스 오픈소스) 
+- 멀티 디바이스(web, android, ios, windows)를 지원합니다.
+
+### 3.1 Socket.io 의 특징
+
+#### 장점
+
+- 통신 구현시 코드가 매우 감소합니다.
+- Socket의 성격과 같이 실시간 통신 가능
+- http를 통해 통신이 가능하고 JsonObject나 일반 Object로 통신이 가능합니다.
+- 브라우저와 웹 서버의 종류와 버전을 파악하여 가장 적합한 기술을 선택하여 사용하는 방식이기 때문에 브라우저의 종류와 상관없이 실시간 웹 구현 가능
+
+#### 단점
+
+- Socket.io는 Javascript에 초점이 만들어졌습니다.
+- 다양한 언어의 서버와 통신을 하기에는 제약이 있습니다.
+
+### 3.2 Socket.io 클라이언트 - JAVA
+
+#### 1. 라이브러리 추가
+* Gradle에 socket.io를 추가합니다.
+~~~java
+dependencies {
+  	...생략 
+    implementation ('com.github.nkzawa:socket.io-client:1.0.0'){
+        exclude group: 'org.json', module: 'json'
+    }
+}
+~~~
+
+#### 2. 소켓을 선언하고 초기화
+* TCP/IP와 동일하게 소켓을 만듭니다.
+* http로 연결이 가능하며, 서버의 주소와 포트 번호를 초기화 해줍니다.
+* URI 초기화 과정은 예외처리를 해주어야 합니다.
+~~~java
+private Socket socket;
+{
+    try{
+        socket = IO.socket("http://***.***.***.***:***");
+    } catch (URISyntaxException ue) {
+        ue.printStackTrace();
+    }
+}
+~~~
+
+#### 3. 소켓을 연결
+* connect() 함수로 소켓을 연결합니다.
+~~~java
+socket.connect();
+~~~
+
+#### 4(1). 서버 측에 이벤트 송신
+* 클라이언트는 어떤 이벤트가 발생하면 이벤트를 서버로 송신할 수 있습니다.
+* emit() 함수를 통해 데이터 또는 메시지를 서버에 전달합니다.
+* 서버는 이를 이벤트의 이름으로 구분하여 수신합니다.
+~~~java
+socket.emit("EVENT_NANE", DATA);
+~~~
+
+#### 4(2). 서버 측의 이벤트 수신
+* 서버는 다른 외부 클라이언트의 요청이나 서버의 이벤트 발생 시 클라이언트에 이벤트를 송신할 수 있습니다.
+* on() 함수를 통해 해당 이벤트 명을 이용해 구분하고 서버의 emit의 반응하는 리스너를 구현합니다.
+* 리스너 안의 call 함수 안에는 이벤트 수신 후 실행할 내용을 담습니다.
+~~~java
+socket.on("EVENT_NAME", '리스너 익명구현 객체');
+Emitter.Listener '리스너 익명구현 객체' = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    // 이벤트 수신 시 실행할 내용들
+                }
+            });
+~~~
+
+#### 5. 사용 후 연결 헤제
+* 서버와의 통신이 더 이상 필요 없는 경우 disconnect() 함수를 이용해 connect를 끊습니다.
+* 그리고 on 시켜 두었던 소켓도 off() 함수로 닫습니다.
+~~~java
+protected void onDestroy() {
+        super.onDestroy();
+        socket.disconnect();
+        socket.off("EVENT_NAME", '리스너 익명구현 객체');
+    }
+~~~
+
+### 3.2 (참고용) Socket.io 서버 - Node.js
+~~~javascript
+var app = require('express')();
+var server = require('http').createServer(app);
+
+var io = require('socket.io')(server);
+
+io.on('connection', function(socket) {
+  console.log("user connect");
+
+  socket.on('받은 이벤트 명', function(){
+    console.log("받은 이벤트 명");
+    io.emit('보낼 이벤트 명', "메시지나 데이터");
+  });
+
+});
+
+http.listen('포트 번호!', function(){
+  console.log("server on 포트번호");
+});
+~~~
+
