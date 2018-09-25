@@ -13,22 +13,22 @@
         android:id="@+id/message"/>
     <Button
         app:layout_constraintTop_toBottomOf="@+id/message"
-        android:text="connect"
-        android:id="@+id/connect_button"
+        android:text="Light On"
+        android:id="@+id/lighton_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <Button
-        app:layout_constraintTop_toBottomOf="@+id/connect_button"
-        android:text="disconnect"
-        android:id="@+id/disconnect_button"
+        app:layout_constraintTop_toBottomOf="@+id/lighton_button"
+        android:text="Light Off"
+        android:id="@+id/lightoff_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <Button
-        app:layout_constraintTop_toBottomOf="@+id/disconnect_button"
+        app:layout_constraintTop_toBottomOf="@+id/lightoff_button"
         android:text="receive"
-        android:id="@+id/receive_btn"
+        android:id="@+id/disconnect_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

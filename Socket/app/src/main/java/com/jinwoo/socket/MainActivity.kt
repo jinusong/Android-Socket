@@ -12,8 +12,8 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var Text : TextView
     lateinit var Receive_Text : TextView
-    lateinit var connect_btn: Button
-    lateinit var disconnect_btn: Button
+    lateinit var lighton_btn: Button
+    lateinit var lightoff_btn: Button
     lateinit var socket: Socket
     lateinit var receive_data : String
     lateinit var receive_btn: Button
@@ -22,63 +22,36 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        connect_btn = findViewById(R.id.connect_button)
-        disconnect_btn = findViewById(R.id.disconnect_button)
+        lighton_btn = findViewById(R.id.lighton_button)
+        lightoff_btn = findViewById(R.id.lightoff_button)
         Text = findViewById(R.id.message)
         Receive_Text = findViewById(R.id.receive_Text)
         receive_btn = findViewById(R.id.receive_btn)
 
         socket = SocketApplication.get()
+
+        Text.setText("소켓 생성")
+
+        socket.on("lightOn",light_on)
+        socket.on("lightOff", light_off)
         socket.connect()
 
-        if(socket != null){
-            Text.setText("Socket 생성")
-        }
+        lighton_btn.setOnClickListener({ v ->
+            socket.emit("lightOn")
+        })
 
-
-
-        connect_btn.setOnClickListener { v ->
-            Thread(Runnable {
-                socket.on("Connecting", onConnect)
-            }).start()
-        }
-
-        receive_btn.setOnClickListener { v ->
-            Thread(Runnable {
-                socket.emit("call")
-                socket.on("data_call", Receiver)
-                Text.setText("Receive 성공")
-            }).start()
-        }
-
-        disconnect_btn.setOnClickListener { v ->
-            Thread(Runnable {
-                socket.disconnect()
-                socket.off(Socket.EVENT_DISCONNECT)
-                Text.setText("Disconnect 성공")
-            }).start()
-        }
+        lightoff_btn.setOnClickListener({ v ->
+            socket.emit("lightOff")
+        })
     }
 
-    private val onConnect = Emitter.Listener { args ->
-
-            var data = "Hello Server"
-
-            try {
-                socket.emit("Connect", data)
-            } catch (e: JSONException) {
-                e.printStackTrace()
-            }
-        Text.setText("Connect 성공")
+    var light_on = Emitter.Listener { args ->
+        Text.setText("소켓 on 성공")
+        Receive_Text.setText(args.toString())
     }
 
-    private val Receiver = Emitter.Listener { args ->
-
-        try{
-            receive_data = args.toString()
-        } catch( e : JSONException){
-            e.printStackTrace()
-        }
-        Receive_Text.setText(receive_data)
+    var light_off = Emitter.Listener { args ->
+        Text.setText("소켓 on 성공")
+        Receive_Text.setText(args.toString())
     }
 }
