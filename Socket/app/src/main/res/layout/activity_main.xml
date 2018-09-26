@@ -25,18 +25,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <Button
-        app:layout_constraintTop_toBottomOf="@+id/lightoff_button"
-        android:text="receive"
-        android:id="@+id/disconnect_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        app:layout_constraintTop_toBottomOf="@+id/receive_btn"
-        android:text="receive"
-        android:id="@+id/receive_Text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 
 </android.support.constraint.ConstraintLayout>
