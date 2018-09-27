@@ -25,9 +25,11 @@ class MainActivity : AppCompatActivity() {
 
         socket = SocketApplication.get()
 
+        socket.connect()
+
         Text.setText("소켓 생성")
 
-        socket.connect()
+
 
         lighton_btn.setOnClickListener { v ->
             socket.emit("lightOn")

@@ -11,6 +11,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var Text : TextView
     lateinit var Receive_Text: TextView
     lateinit var socket: Socket
+    var data: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,19 +22,26 @@ class MainActivity : AppCompatActivity() {
 
         socket = SocketApplication.get()
 
+        socket.connect()
+
         socket.on("lightOn",light_on)
         socket.on("lightOff", light_off)
-        socket.connect()
     }
 
     var light_on = Emitter.Listener { args ->
-        Text.setText("소켓 on 성공")
-        Receive_Text.setText(args.toString())
+        runOnUiThread({
+            Text.setText("소켓 on 성공")
+            data = args[0].toString()
+            Receive_Text.setText(data)
+        })
     }
 
     var light_off = Emitter.Listener { args ->
-        Text.setText("소켓 on 성공")
-        Receive_Text.setText(args.toString())
+        runOnUiThread({
+            Text.setText("소켓 on 성공")
+            data = args[0].toString()
+            Receive_Text.setText(data)
+        })
     }
 
 }
