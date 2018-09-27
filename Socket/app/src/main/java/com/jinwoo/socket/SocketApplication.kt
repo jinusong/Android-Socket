@@ -11,7 +11,7 @@ class SocketApplication: Application() {
         private lateinit var socket : Socket
         fun get(): Socket {
             try {
-                socket = IO.socket("http://127.0.0.0:3000")
+                socket = IO.socket("http://127.0.0.1:3001")
             } catch (e: URISyntaxException) {
                 e.printStackTrace();
             }

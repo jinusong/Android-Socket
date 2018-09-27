@@ -1,4 +1,4 @@
-var http = require('http').createServer(app);
+var http = require('http').createServer();
 var io = require('socket.io')(http);
 // socket io 가져오기 
 
@@ -19,6 +19,6 @@ io.on('connection', function(socket) {
 });
 
 //서버를 시작한다. 
-http.listen(3000, function(){
-  console.log("server on 3000");
+http.listen(5000, function(){
+  console.log("server on 5000");
 });

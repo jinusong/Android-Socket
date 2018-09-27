@@ -29,15 +29,15 @@ class MainActivity : AppCompatActivity() {
 
         socket.connect()
 
-        lighton_btn.setOnClickListener({ v ->
+        lighton_btn.setOnClickListener { v ->
             socket.emit("lightOn")
             Text.setText("Light on Emit 성공")
-        })
+        }
 
-        lightoff_btn.setOnClickListener({ v ->
+        lightoff_btn.setOnClickListener { v ->
             socket.emit("lightOff")
             Text.setText("Light off Emit 성공")
-        })
+        }
     }
 
 
